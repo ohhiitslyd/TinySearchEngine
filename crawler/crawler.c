@@ -15,38 +15,35 @@
 
 #define MAX_DEPTH 10
 
-void processWebpage(void *arg, void *item);
-void dummyDelete(void *item);
+void processWebpage(hashtable_t *processedPages, bag_t *toCrawl, char *pageDirectory, webpage_t *page);
 
-typedef struct crawlerData {
-    hashtable_t *processedPages;
-    bag_t *toCrawl;
-    char *pageDirectory;
-} crawlerData_t;
-
-void dummyDelete(void *item) {
-    // Do nothing
+void printHash(FILE *fp, const char *key, void *item) {
+    fprintf(fp, "%s : %p", key, item);
 }
 
-void printWebpageURL(FILE *fp, void *item) {
+void printBag(FILE *fp, void *item) {
     webpage_t *page = item;
-    fprintf(fp, "%s\n", webpage_getURL(page));
+    fprintf(fp, "%s", webpage_getURL(page));
 }
+
+void delete_hashtable_item(void* arg, const char* key, void* item) {
+    // Delete the webpage
+    free(item);
+
+    // Free the key if it was dynamically allocated
+    free((char*)key);
+}
+
 
 inline static void logr(const char *action, char *url, int depth){
     fprintf(stdout, "%2d %9s: %s \n", depth, action, url);
 }
 
-void processWebpage(void *arg, void *item) {
-    static int id = 1; 
-    crawlerData_t *crawlerData = (crawlerData_t *)arg;
-    hashtable_t *processedPages = crawlerData->processedPages;
-    bag_t *toCrawl = crawlerData->toCrawl;
-    char *pageDirectory = crawlerData->pageDirectory;
-    webpage_t *page = (webpage_t *)item;
+void processWebpage(hashtable_t *processedPages, bag_t *toCrawl, char *pageDirectory, webpage_t *page) {
+    static int id = 0; 
 
-    printf("%2d Webpage Fetched: %s\n", webpage_getDepth(page), webpage_getURL(page));
-    printf("%2d Scanning Webpage: %s\n", webpage_getDepth(page), webpage_getURL(page));
+    printf("%2d Fetched: %s\n", webpage_getDepth(page), webpage_getURL(page));
+    printf("%2d Scanning: %s\n", webpage_getDepth(page), webpage_getURL(page));
 
     if (webpage_fetch(page)) {
         char filename[256];
@@ -58,33 +55,39 @@ void processWebpage(void *arg, void *item) {
         } else {
             fprintf(stderr, "Failed to open file '%s'\n", filename);
         }
+        
 
         int pos = 0;
         char *result;
         while ((result = webpage_getNextURL(page, &pos)) != NULL) {
             char *normalizedURL = normalizeURL(result);
             if (normalizedURL != NULL) {
-                printf("%2d Webpage Seen: %s\n", webpage_getDepth(page) + 1, normalizedURL);
-                if (isInternalURL(normalizedURL)) {
-                    if (!hashtable_insert(processedPages, strdup(normalizedURL), "")) {
-                        printf("%2d Duplicate: %s\n", webpage_getDepth(page) + 1, normalizedURL);
-                    } else if (webpage_getDepth(page) < MAX_DEPTH) {
-                        webpage_t *newPage = webpage_new(strdup(normalizedURL), webpage_getDepth(page) + 1, NULL);
-                        if (newPage != NULL) {
-                            bag_insert(toCrawl, newPage);
-                            printf("%2d Page Inserted: %s\n", webpage_getDepth(page) + 1, normalizedURL);
-                        } else {
-                            fprintf(stderr, "Failed to create new page\n");
-                            free(normalizedURL);
-                            free(result);
-                            continue;
+                printf("%2d Found: %s\n", webpage_getDepth(page), normalizedURL);
+                if (hashtable_find(processedPages, normalizedURL) == NULL) {
+                    if (isInternalURL(normalizedURL)) {
+                        if (hashtable_find(processedPages, normalizedURL) != NULL) {
+                            printf("%2d IgnDupl: %s\n", webpage_getDepth(page), normalizedURL);
+                        } else if (webpage_getDepth(page) < MAX_DEPTH) {
+                            webpage_t *newPage = webpage_new(strdup(normalizedURL), webpage_getDepth(page) + 1, NULL);
+                            if (newPage != NULL) {
+                                bag_insert(toCrawl, newPage);
+                                hashtable_insert(processedPages, normalizedURL, "");
+                                printf("%2d Added: %s\n", webpage_getDepth(page), normalizedURL);
+                            } else {
+                                fprintf(stderr, "Failed to create new page\n");
+                                free(normalizedURL);
+                                free(result);
+                                continue;
+                            }
                         }
+                    } else {
+                        printf("%2d IgnExtrn: %s\n", webpage_getDepth(page), normalizedURL);
                     }
                 } else {
-                    printf("%2d Unnecessary: %s\n", webpage_getDepth(page) + 1, normalizedURL);
+                    printf("%2d IgnDupl: %s\n", webpage_getDepth(page), normalizedURL);
                 }
-                free(normalizedURL);
-                free(result);
+                free(normalizedURL); // Moved here
+                free(result); // Moved here
             }
             else {
                 fprintf(stderr, "Failed to normalize URL\n");
@@ -92,12 +95,11 @@ void processWebpage(void *arg, void *item) {
                 continue;
             }
         }
-        
-    } else {
+
+    } 
+    else {
         fprintf(stderr, "Failed to fetch page: %s\n", webpage_getURL(page));
     }
-
-    hashtable_insert(processedPages, webpage_getURL(page), page);
 }
 
 int main(int argc, char *argv[]) {
@@ -137,7 +139,7 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Failed to create bag\n");
         return 1;
     }
-    hashtable_t *processedPages = hashtable_new(100);
+    hashtable_t *processedPages = hashtable_new(50);
     if (processedPages == NULL) {
         fprintf(stderr, "Failed to create hashtable\n");
         bag_delete(toCrawl, NULL);
@@ -152,21 +154,32 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     bag_insert(toCrawl, seedPage);
-    hashtable_insert(processedPages, strdup(seedURL), seedPage);
-
-    crawlerData_t crawlerData;
-    crawlerData.processedPages = processedPages;
-    crawlerData.toCrawl = toCrawl;
-    crawlerData.pageDirectory = pageDirectory;
+    hashtable_insert(processedPages, seedURL, "");
 
     // Keep crawling until the bag is empty
     webpage_t *page;
     while ((page = bag_extract(toCrawl)) != NULL) {
-        processWebpage(&crawlerData, page);
+        processWebpage(processedPages, toCrawl, pageDirectory, page);
+        printf("HTML: %s\n", webpage_getHTML(page));
+        printf("URL: %s\n", webpage_getURL(page));
+
+        webpage_delete(page);
     }
 
-    bag_delete(toCrawl, dummyDelete);
-    hashtable_delete(processedPages, dummyDelete);
+    
+
+
+    //hashtable_iterate(processedPages, NULL, delete_hashtable_item);
+    //bag_delete(toCrawl, webpage_delete);
+    bag_delete(toCrawl, NULL);
+    //printf("Hash before being deleted:\n");
+    //hashtable_print(processedPages, stdout, printHash);
+    //printf("\n");
+    hashtable_delete(processedPages, NULL);
+    //free(processedPages);
+    //hashtable_delete(processedPages, NULL);
+    //free(seedURL);
+    //free(seedPage);
 
     return 0;
 }
