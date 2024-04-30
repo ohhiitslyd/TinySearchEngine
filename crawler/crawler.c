@@ -86,8 +86,8 @@ void processWebpage(hashtable_t *processedPages, bag_t *toCrawl, char *pageDirec
                 } else {
                     printf("%2d IgnDupl: %s\n", webpage_getDepth(page), normalizedURL);
                 }
-                free(normalizedURL); // Moved here
-                free(result); // Moved here
+                free(normalizedURL);
+                free(result);
             }
             else {
                 fprintf(stderr, "Failed to normalize URL\n");
@@ -155,6 +155,7 @@ int main(int argc, char *argv[]) {
     }
     bag_insert(toCrawl, seedPage);
     hashtable_insert(processedPages, seedURL, "");
+    
 
     // Keep crawling until the bag is empty
     webpage_t *page;
@@ -163,10 +164,13 @@ int main(int argc, char *argv[]) {
         printf("HTML: %s\n", webpage_getHTML(page));
         printf("URL: %s\n", webpage_getURL(page));
 
-        webpage_delete(page);
+        if(page != seedPage) {
+            webpage_delete(page);
+        }
     }
-
-    
+    free(webpage_getHTML(seedPage));
+    // free(webpage_getURL(seedPage));
+    free(seedPage);
 
 
     //hashtable_iterate(processedPages, NULL, delete_hashtable_item);
