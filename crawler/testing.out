@@ -1,29 +1,45 @@
+ml () {  module ml "$@"
+}
+module () {  _module_raw "$@" 2>&1
+}
+_module_raw () {  eval `/usr/bin/tclsh8.6 /usr/lib/x86_64-linux-gnu/modulecmd.tcl bash "$@"`;
+ _mlstatus=$?;
+ return $_mlstatus
+}
 # no arguments
 echo "No arguments"
+No arguments
 './crawler'
+'Usage: ./crawler seedURL pageDirectory maxDepth' where 0 < maxDepth < 10
 
 # external server
 echo "External server"
+External server
 ./crawler https://www.google.com testing 1
+Failed to create .crawler file
 
 # invalid depths 
 echo "Invalid depths"                                                                
+Invalid depths
 ./crawler hhttp://cs50tse.cs.dartmouth.edu/tse/letters/index.html pageDirectory -1                                                                          
+Invalid seed URL
 ./crawler http://cs50tse.cs.dartmouth.edu/tse/letters/index.html pageDirectory 11 
+Max depth must be between 0 and 10
 
 # non-existent directory
 echo "Non-existent directory"
+Non-existent directory
 ./crawler http://cs50tse.cs.dartmouth.edu/tse/letters/index.html test 1
+Failed to create .crawler file
 
 # excessive many arguments
 echo "Excessive many arguments"
+Excessive many arguments
 ./crawler http://cs50tse.cs.dartmouth.edu/tse/letters/index.html pageDirectory 1 test
+'Usage: ./crawler seedURL pageDirectory maxDepth' where 0 < maxDepth < 10
 
 
 # valid test
 echo "Valid test"
+Valid test
 ./crawler http://cs50tse.cs.dartmouth.edu/tse/letters/index.html pageDirectory 2
-
-# valid test & different seed
-echo "Valid test & different seed"
-./crawler http://cs50tse.cs.dartmouth.edu/tse/letters/A.html pageDirectory 3
