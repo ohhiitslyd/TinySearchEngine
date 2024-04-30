@@ -1,4 +1,4 @@
 crawler.o
 oldcrawler.c
-pageDirectory
+data/
 crawler
