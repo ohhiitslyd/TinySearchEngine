@@ -4,10 +4,7 @@
 #include <stdbool.h>
 #include "../libcs50/webpage.h"
 
-// Save a webpage to a file
-bool pagedir_save(const char *pageDirectory, const webpage_t *page, int id);
-
-// Load a webpage from a file
-webpage_t *pagedir_load(const char *filename);
+bool pagedir_init(const char* pageDirectory);
+void pagedir_save(const webpage_t* page, const char* pageDirectory, const int docID);
 
 #endif // __PAGEDIR_H
