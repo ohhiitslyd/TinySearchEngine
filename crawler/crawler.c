@@ -1,4 +1,16 @@
-#define _POSIX_C_SOURCE 200809L
+/*
+ * crawler.c - CS50 'crawler' module
+ *
+ * This module is used for crawling webpages starting from a seed URL.
+ * It fetches webpages, scans them for links, and repeats this process
+ * for all found links up to a specified maximum depth.
+ *
+ * CS50
+ * Author: Lydia Jin
+ * Date: April 29, 2024
+ */
+
+#define _POSIX_C_SOURCE 200809L //to make stdrdup work
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

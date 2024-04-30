@@ -1,3 +1,13 @@
+/*
+ * pagedir.c - CS50 'pagedir' module
+ *
+ * see pagedir.h for more information.
+ *
+ * CS50
+ * Author: Lydia Jin
+ * Date: April 29, 2024
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "pagedir.h"
