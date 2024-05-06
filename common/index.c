@@ -24,11 +24,20 @@ void index_add(index_t *index, const char *word, int docID) {
     printf("Index added for %s\n", word);
 }
 
-// // Delete the index
-// void index_delete(index_t* index) {
-//     hashtable_delete(index, NULL);
-//     printf("Index deleted\n");
-// }
+// Function to delete a counter
+void counters_delete_fn(void *item) {
+    printf("Counter deleted\n");
+    counters_t *counters = item;
+    counters_delete(counters);
+    
+}
+
+// Delete the index
+void index_delete(index_t* index) {
+    hashtable_delete(index, counters_delete_fn);
+    printf("Index deleted\n");
+}
+
 
 // Save an item in the counters
 void counters_item_save(void* arg, const int key, const int item) {
