@@ -1,7 +1,7 @@
 /*
  * pagedir.h - CS50 'pagedir' module
  *
- * This module is used for creating a page directory and saving webpages.
+ * see pagedir.c for implementation.
  *
  * CS50
  * Author: Lydia Jin
@@ -13,21 +13,18 @@
 
 #include <stdbool.h>
 #include "../libcs50/webpage.h"
+#include "../libcs50/file.h"
 
-/*
- * pagedir_init - Initialize a new page directory.
- * @pageDirectory: The directory to initialize.
- *
- * Return: true if successful, false otherwise.
- */
+/* Initialize a page directory. */
 bool pagedir_init(const char* pageDirectory);
 
-/*
- * pagedir_save - Save a webpage to a page directory.
- * @page: The webpage to save.
- * @pageDirectory: The directory to save the webpage in.
- * @docID: The document ID to assign to the saved webpage.
- */
+/* Save a webpage to a page directory. */
 void pagedir_save(const webpage_t* page, const char* pageDirectory, const int docID);
+
+/* Validate a page directory. */
+bool pagedir_validate(const char* pageDirectory);
+
+/* Load a webpage from a page directory. */
+webpage_t* pagedir_load(const char* pageDirectory, const int docID);
 
 #endif // __PAGEDIR_H

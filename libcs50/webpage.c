@@ -248,6 +248,9 @@ webpage_fetch(webpage_t* page)
 char* 
 webpage_getNextWord(webpage_t* page, int* pos)
 {
+  char* word = calloc(10, sizeof(char));
+  printf("webpage_getNextWord\n");
+  fflush(stdout);
   // make sure we have something to search, and a place for the result
   if (page == NULL || page->html == NULL || pos == NULL) {
     return NULL;
@@ -280,6 +283,8 @@ webpage_getNextWord(webpage_t* page, int* pos)
 
   // doc[*pos] is the first character of a word
   beg = &(doc[*pos]);
+  printf("beg: %s\n", beg);
+
 
   // consume word
   while (doc[*pos] != '\0' && isalpha(doc[*pos])) {
@@ -295,7 +300,7 @@ webpage_getNextWord(webpage_t* page, int* pos)
   int wordlen = end - beg + 1;
 
   // allocate space for length of new word + '\0'
-  char* word = calloc(wordlen + 1, sizeof(char));
+  //char* word = calloc(wordlen + 1, sizeof(char));
   if (word == NULL) {        // out of memory!
     return NULL;
   } else {
