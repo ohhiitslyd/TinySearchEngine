@@ -3,7 +3,7 @@
 # David Kotz - April 2016, 2017, 2021
 
 CC = gcc
-CFLAGS = -Wall -pedantic -std=c11 -ggdb
+CFLAGS = -Wall -pedantic -std=c11 -ggdb -I../libcs50 -I../common
 OBJS = crawler.o ../libcs50/bag.o ../libcs50/webpage.o ../libcs50/file.o
 LIBS = ../libcs50/libcs50-given.a ../common/common.a
 

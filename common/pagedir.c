@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "pagedir.h"
-#include "../libcs50/file.h"
+#include "file.h"
 
 bool pagedir_init(const char* pageDirectory) {
     char crawlerFilePath[256];

@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../libcs50/file.h"
-#include "../libcs50/hashtable.h"
-#include "../libcs50/counters.h"
+#include "file.h"
+#include "hashtable.h"
+#include "counters.h"
 
 typedef hashtable_t index_t;
 

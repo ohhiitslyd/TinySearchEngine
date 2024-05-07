@@ -12,8 +12,8 @@
 #define __PAGEDIR_H
 
 #include <stdbool.h>
-#include "../libcs50/webpage.h"
-#include "../libcs50/file.h"
+#include "webpage.h"
+#include "file.h"
 
 /* Initialize a page directory. */
 bool pagedir_init(const char* pageDirectory);

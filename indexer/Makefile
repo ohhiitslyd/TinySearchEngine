@@ -1,6 +1,6 @@
 # Compiler options
 CC = gcc
-CFLAGS = -Wall -pedantic -std=c11 -ggdb
+CFLAGS = -Wall -pedantic -std=c11 -ggdb -I../libcs50 -I../common
 
 # Paths to libraries and includes
 LIBCS50 = ../libcs50/libcs50-given.a

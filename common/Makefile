@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -pedantic -std=c11 -ggdb
+CFLAGS = -Wall -pedantic -std=c11 -ggdb -I../libcs50 
 LIBS = ../libcs50/libcs50-given.a
 
 .PHONY: all clean

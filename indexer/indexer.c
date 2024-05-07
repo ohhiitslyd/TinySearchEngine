@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../libcs50/hashtable.h"
-#include "../libcs50/counters.h"
-#include "../libcs50/webpage.h"
-#include "../common/pagedir.h"
-#include "../common/index.h"
-#include "../common/word.h"
+#include "hashtable.h"
+#include "counters.h"
+#include "webpage.h"
+#include "pagedir.h"
+#include "index.h"
+#include "word.h"
 
 void indexPage(webpage_t *page, int docID, index_t *index);
 bool pagedir_validate(const char *pageDirectory);
