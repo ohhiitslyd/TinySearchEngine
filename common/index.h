@@ -1,3 +1,13 @@
+/*
+ * index.c - CS50 'common' directory
+ *
+ * The 'index' module provides the functionality to create, modify, save, and load an index that maps from words to document IDs and counts. This index is used by the 'indexer' and 'querier' modules to facilitate efficient searching of the crawled webpages.
+ *
+ * CS50
+ * Author: Lydia Jin
+ * Date: May 6, 2024
+ */
+
 #ifndef __INDEX_H
 #define __INDEX_H
 

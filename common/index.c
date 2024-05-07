@@ -1,3 +1,13 @@
+/*
+ * index.c - CS50 'common' directory
+ *
+ * The 'index' module provides the functionality to create, modify, save, and load an index that maps from words to document IDs and counts. This index is used by the 'indexer' and 'querier' modules to facilitate efficient searching of the crawled webpages.
+ *
+ * CS50
+ * Author: Lydia Jin
+ * Date: May 6, 2024
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "file.h"
@@ -8,25 +18,22 @@ typedef hashtable_t index_t;
 
 // Create a new index
 index_t* index_new(const int num_slots) {
-    printf("Index created\n");
     return hashtable_new(num_slots);
     
 }
 
+//add index
 void index_add(index_t *index, const char *word, int docID) {
     counters_t *counters = hashtable_find(index, word);
-    printf("Index added for %s with docID %d\n", word, docID);
     if (counters == NULL) {
         counters = counters_new();
         hashtable_insert(index, word, counters);
     }
     counters_add(counters, docID);
-    printf("Index added for %s\n", word);
 }
 
 // Function to delete a counter
 void counters_delete_fn(void *item) {
-    printf("Counter deleted\n");
     counters_t *counters = item;
     counters_delete(counters);
     
@@ -35,7 +42,6 @@ void counters_delete_fn(void *item) {
 // Delete the index
 void index_delete(index_t* index) {
     hashtable_delete(index, counters_delete_fn);
-    printf("Index deleted\n");
 }
 
 
@@ -43,7 +49,6 @@ void index_delete(index_t* index) {
 void counters_item_save(void* arg, const int key, const int item) {
     FILE* fp = arg;
     fprintf(fp, "%d %d ", key, item);
-    printf("Counters item saved\n");
 }
 
 // Save an item in the index
@@ -54,7 +59,6 @@ void index_item_save(void* arg, const char* key, void* item) {
     fprintf(fp, "%s ", key);
     counters_iterate(counters, fp, counters_item_save);
     fprintf(fp, "\n");
-    printf("Index item saved\n");
 }
 
 
@@ -64,7 +68,6 @@ int index_save(FILE* fp, index_t* index) {
         return 1; 
     }
     hashtable_iterate(index, fp, index_item_save);
-    printf("Index saved\n");
     return 0;
     
 }
@@ -91,7 +94,6 @@ index_t* index_load(FILE* fp) {
             counters_set(counters, docID, count);
         }
         hashtable_insert(index, word, counters);
-        printf("%s inserted into hashtable\n", word);
         free(word); 
     }
     return index;
