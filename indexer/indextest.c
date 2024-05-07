@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../common/index.c"
+#include "../common/index.h"
 
 int main(int argc, char *argv[]) {
     // Check command line arguments

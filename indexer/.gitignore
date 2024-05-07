@@ -1,5 +1,11 @@
 *.o
 /data/*
+/crawlData/*
 *.out
 *.exe
 *.bin
+/indexer
+/indextest
+/test
+/test.copy
+indexer/indexer

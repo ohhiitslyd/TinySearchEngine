@@ -1,31 +1,33 @@
+# Compiler options
 CC = gcc
 CFLAGS = -Wall -pedantic -std=c11 -ggdb
-LIBS = ../libcs50/libcs50-given.a ../common/common.a
 
-PROGS = indexer indextest
-OBJS = indexer.o indextest.o
+# Paths to libraries and includes
+LIBCS50 = ../libcs50/libcs50-given.a
+COMMON = ../common/common.a
 
-.PHONY: all clean test
+# Target executables
+TARGETS = indextest indexer
 
-all: $(PROGS)
+# Source files
+SRCS = indextest.c indexer.c
 
-indexer: indexer.o $(LIBS)
+# Object files
+OBJS = $(SRCS:.c=.o)
+
+# Rule to build the target executables
+all: $(TARGETS)
+
+indextest: indextest.o $(COMMON) $(LIBCS50)
 	$(CC) $(CFLAGS) $^ -o $@
 
-indextest: indextest.o $(LIBS)
+indexer: indexer.o $(COMMON) $(LIBCS50)
 	$(CC) $(CFLAGS) $^ -o $@
 
-indexer.o: indexer.c
-	$(CC) $(CFLAGS) -c $<
+# Rule to compile source files into object files
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-indextest.o: indextest.c
-	$(CC) $(CFLAGS) -c $<
-
+# Phony target to clean up the directory
 clean:
-	rm -f *~
-	rm -f *.o
-	rm -f $(PROGS)
-	rm -f core.*
-
-test: $(PROGS)
-	bash -v testing.sh
+	rm -f $(OBJS) $(TARGETS)

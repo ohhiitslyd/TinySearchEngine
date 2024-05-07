@@ -1,5 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -pedantic -std=c11 -ggdb
+LIBS = ../libcs50/libcs50-given.a
 
 .PHONY: all clean
 
@@ -11,12 +12,12 @@ common.a: pagedir.o index.o word.o
 pagedir.o: pagedir.c pagedir.h
 	$(CC) $(CFLAGS) -c $<
 
-index.o: index.c
+index.o: index.c index.h
 	$(CC) $(CFLAGS) -c $<
 
-word.o: word.c
+word.o: word.c word.h
 	$(CC) $(CFLAGS) -c $<
 
 clean:
 	rm -f *.o
-	rm -f *.a
+	rm -f common.a

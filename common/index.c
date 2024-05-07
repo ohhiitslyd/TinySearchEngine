@@ -71,20 +71,29 @@ int index_save(FILE* fp, index_t* index) {
 
 // Load the index from a file
 index_t* index_load(FILE* fp) {
-    index_t* index = index_new(100); // Adjust size as needed
+    // Count the number of lines in the file
+    int num_lines = file_numLines(fp);
+
+    // Create a new index with a size based on the number of lines in the file
+    index_t* index = index_new(num_lines); 
 
     char* word;
     while ((word = file_readWord(fp)) != NULL) {
+
         counters_t* counters = counters_new();
+        if (counters == NULL) {
+            // Handle error: counters_new failed
+            free(word);  // Free word before returning
+            return NULL;
+        }
         int docID, count;
         while (fscanf(fp, "%d %d ", &docID, &count) == 2) {
             counters_set(counters, docID, count);
         }
         hashtable_insert(index, word, counters);
-        printf("%s inserted in hashtable\n", word);
-        free(word);
+        printf("%s inserted into hashtable\n", word);
+        free(word); 
     }
-
     return index;
 }
 
