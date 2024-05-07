@@ -1,7 +1,6 @@
 *.o
 /data/*
 /crawlData/*
-*.out
 *.exe
 *.bin
 /indexer
