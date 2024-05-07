@@ -1,3 +1,13 @@
+/*
+ * indexer.c - CS50 'indexer' module
+ *
+ * Indexer reads the page files produced by the crawler, builds an index that maps from words to document IDs and counts, and write that index to a file.
+ *
+ * CS50
+ * Author: Lydia Jin
+ * Date: May 6, 2024
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -71,7 +81,6 @@ void indexPage(webpage_t *page, int docID, index_t *index) {
     char* word;
 
     while ((word = webpage_getNextWord(page, &pos)) != NULL) {
-        printf("Word: %s\n", word);
         if (strlen(word) >= 3) {
             normalizeWord(word);
             counters_t *counters = hashtable_find(index, word);
@@ -98,7 +107,6 @@ index_t *indexBuild(const char *pageDirectory) {
     int docID = 1;
     webpage_t *page;
     while ((page = pagedir_load(pageDirectory, docID)) != NULL) {
-        printf("Indexing page %d\n", docID);
         indexPage(page, docID, index);
         webpage_delete(page);
         docID++;

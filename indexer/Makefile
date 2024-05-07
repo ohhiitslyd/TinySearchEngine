@@ -1,3 +1,7 @@
+# Makefile for CS50 Indexer
+#
+# Lydia Jin, May 2024
+
 # Compiler options
 CC = gcc
 CFLAGS = -Wall -pedantic -std=c11 -ggdb -I../libcs50 -I../common
@@ -31,3 +35,9 @@ indexer: indexer.o $(COMMON) $(LIBCS50)
 # Phony target to clean up the directory
 clean:
 	rm -f $(OBJS) $(TARGETS)
+
+# Phony target to run tests
+.PHONY: test
+test:
+	chmod +x testing.sh
+	./testing.sh > testing.out 2>&1
