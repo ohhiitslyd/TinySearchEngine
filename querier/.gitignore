@@ -1,0 +1,9 @@
+*.o
+/data/*
+/crawlData/*
+*.exe
+*.bin
+/querier
+/test
+/test.copy
+querier/querier
