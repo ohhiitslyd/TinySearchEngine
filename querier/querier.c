@@ -21,6 +21,15 @@ static void displayPrompt(void);
 static bool splitQuery(char *query, char ***queryWords, int *wordCount);
 static bool checkQuerySyntax(char **queryWords, int wordCount);
 static int isLogicalOperator(char *word);
+static counters_t* searchQuery(char **queryWords, int wordCount, index_t* indexData);
+static counters_t *retrieveDocs(char *current, char *next, hashtable_t *indexData);
+static void intersectCounters(counters_t *mainCounters, counters_t *tempCounters);
+static void intersectionHelper(void *arg, const int key, int count);
+static void mergeCounters(counters_t *mainCounters, counters_t *tempCounters);
+static void mergeHelper(void *arg, const int key, const int count);
+static void displayResults(counters_t *matchedDocs, char* dir);
+static void countSize(void *arg, const int docID, int count);
+static void findTopDoc(void *arg, const int docID, int count);
 
 
 int main(int argc, char *argv[])
@@ -205,3 +214,206 @@ static int isLogicalOperator(char *word)
     return 0;
 }
 
+// Search the query in the index and find matching documents
+static counters_t* searchQuery(char **queryWords, int wordCount, index_t* indexData)
+{
+    if (!queryWords || !indexData) {
+        fprintf(stderr, "Error: Invalid pointer(s) provided.\n");
+        return NULL;
+    }
+
+    counters_t *result = counters_new();  // Initialize result counters
+    counters_t *temp = counters_new();  // Temporary counters
+    if (!result || !temp) {
+        fprintf(stderr, "Error: Memory allocation failed.\n");
+        free(queryWords);
+        return NULL;
+    }
+
+    counters_t *wordDocs = retrieveDocs(queryWords[0], queryWords[0], indexData);
+    if (!wordDocs) {
+        counters_delete(result);
+        counters_delete(temp);
+        free(queryWords);
+        return NULL;
+    }
+
+    mergeCounters(temp, wordDocs);  // Merge initial word documents
+
+    for (int i = 1; i < wordCount; i++) {
+        char *curr = queryWords[i];
+        char *next = queryWords[i + 1];
+        wordDocs = retrieveDocs(curr, next, indexData);
+        if (!curr || ((i < wordCount - 1) && !next)) {
+            fprintf(stderr, "Error: Invalid word(s) in query.\n");
+            counters_delete(result);
+            counters_delete(temp);
+            free(queryWords);
+            return NULL;
+        }
+        if (!wordDocs) {
+            counters_delete(result);
+            counters_delete(temp);
+            free(queryWords);
+            return NULL;
+        }
+
+        int operatorType = isLogicalOperator(curr);
+        if (operatorType >= 2) {  // "or" operator
+            mergeCounters(result, temp);
+            counters_delete(temp);
+            temp = counters_new();
+            mergeCounters(temp, wordDocs);
+            i++;
+        } else if (operatorType == 1) {  // "and" operator
+            intersectCounters(temp, wordDocs);
+            i++;
+        } else if (operatorType == 0) {  // Normal word
+            intersectCounters(temp, wordDocs);
+        }
+    }
+
+    mergeCounters(result, temp);  // Final merge of counters
+    counters_delete(temp);
+
+    return result;
+}
+
+// Retrieve documents containing the specified word
+static counters_t *retrieveDocs(char *current, char *next, hashtable_t *indexData)
+{
+    if (!current || !indexData || (isLogicalOperator(current) >= 1 && !next)) {
+        fprintf(stderr, "Error: Invalid pointer(s) provided.\n");
+        return NULL;
+    }
+
+    char *word = (isLogicalOperator(current) >= 1) ? next : current;
+
+    counters_t *wordDocs = hashtable_find(indexData, word);
+    if (!wordDocs) {
+        printf("Error: No documents match word '%s'.\n", word);
+        return NULL;
+    }
+
+    return wordDocs;
+}
+
+// Intersect two counters objects
+static void intersectCounters(counters_t *mainCounters, counters_t *tempCounters)
+{
+    counters_iterate(tempCounters, mainCounters, &intersectionHelper);
+}
+
+// Helper function for intersecting counters
+static void intersectionHelper(void *arg, const int key, int count)
+{
+    counters_t *mainCounters = arg;
+    if (!mainCounters) {
+        fprintf(stderr, "Error: Invalid pointer provided.\n");
+        return;
+    }
+
+    int countA = counters_get(mainCounters, key);
+    int countB = count;
+
+    if (countA != 0) {
+        counters_set(mainCounters, key, (countA < countB) ? countA : countB);
+    }
+}
+
+// Merge two counters objects
+static void mergeCounters(counters_t *mainCounters, counters_t *tempCounters)
+{
+    counters_iterate(tempCounters, mainCounters, &mergeHelper);
+}
+
+// Helper function for merging counters
+static void mergeHelper(void *arg, const int key, const int count)
+{
+    counters_t *mainCounters = arg;
+    if (!mainCounters) {
+        fprintf(stderr, "Error: Invalid argument for merge helper function.\n");
+        return;
+    }
+    int countB = count;
+    int countA = counters_get(mainCounters, key);
+
+    if (countA != 0) {
+        counters_set(mainCounters, key, countA + countB);
+    } else {
+        counters_set(mainCounters, key, countB);
+    }
+}
+
+// Display the matched documents
+static void displayResults(counters_t *matchedDocs, char* dir)
+{
+    if (!matchedDocs || !dir) {
+        fprintf(stderr, "Error: Invalid parameters for printing matched documents.\n");
+        return;
+    }
+
+    int ctrsSize = 0;
+    int bestDoc[2] = {0, 0};
+    counters_iterate(matchedDocs, &ctrsSize, &countSize);
+    printf("Matches %d documents (ranked):\n", ctrsSize);
+
+    for (int i = 0; i < ctrsSize; i++) {
+        counters_iterate(matchedDocs, bestDoc, &findTopDoc);
+
+        char *docFilename = malloc(strlen(dir) + (floor(log10(bestDoc[0])) + 1) + 2);
+        if (sprintf(docFilename, "%s/%d", dir, bestDoc[0]) < 0) {
+            fprintf(stderr, "Error: Failed to construct document file pathname.\n");
+            return;
+        }
+
+        FILE *fp = fopen(docFilename, "r");
+        if (!fp) {
+            free(docFilename);
+            fprintf(stderr, "Error: Failed to open document file.\n");
+            return;
+        }
+        char *URL = file_readLine(fp);
+        if (!URL) {
+            free(docFilename);
+            fprintf(stderr, "Error: Failed to read document file.\n");
+            return;
+        }
+
+        printf("score %3d - doc %4d:  %s\n", bestDoc[1], bestDoc[0], URL);
+
+        counters_set(matchedDocs, bestDoc[0], 0);
+
+        free(docFilename);
+        free(URL);
+        fclose(fp);
+        bestDoc[0] = 0;
+        bestDoc[1] = 0;
+    }
+
+    counters_delete(matchedDocs);
+}
+
+// Helper function to count the size of the counters
+static void countSize(void *arg, const int docID, int count)
+{
+    int *ctrsSize = arg;
+    if (!ctrsSize) {
+        fprintf(stderr, "Error: Failed to initialize counter for tracking size.\n");
+    }
+    (*ctrsSize)++;
+}
+
+// Helper function to find the top document by score
+static void findTopDoc(void *arg, const int docID, int count)
+{
+    int* bestDoc = arg;
+    if (!bestDoc) {
+        fprintf(stderr, "Error: Failed to access array for storing best document info.\n");
+        return;
+    }
+    if (count > bestDoc[1]) {
+        bestDoc[0] = docID;
+        bestDoc[1] = count;
+    }
+}
