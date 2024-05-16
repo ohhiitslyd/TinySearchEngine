@@ -4,7 +4,7 @@
 
 # Compiler options
 CC = gcc
-CFLAGS = -Wall -pedantic -std=c11 -ggdb -I../libcs50 -I../common -I../indexer
+CFLAGS = -Wall -pedantic -std=c11 -ggdb -I../common -I../libcs50 -I../indexer
 
 # Paths to libraries and includes
 LIBCS50 = ../libcs50/libcs50-given.a
@@ -33,8 +33,8 @@ querier: querier.o $(COMMON) $(LIBCS50)
 clean:
 	rm -f $(OBJS) $(TARGETS)
 
-# # Phony target to run tests
-# .PHONY: test
-# test:
-# 	chmod +x testing.sh
-# 	./testing.sh > testing.out 2>&1
+# Phony target to run tests
+.PHONY: test
+test:
+	chmod +x testing.sh
+	./testing.sh > testing.out 2>&1

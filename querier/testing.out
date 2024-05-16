@@ -1,0 +1,285 @@
+Test: No arguments
+Passed: No arguments
+Test: One argument
+Passed: One argument
+Test: Invalid page directory
+Passed: Invalid page directory
+Test: Invalid index file
+Passed: Invalid index file
+Test: Empty query
+==3902438== Memcheck, a memory error detector
+==3902438== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==3902438== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==3902438== Command: ./querier ../crawler/pageDirectory ../indexer/testoutput
+==3902438== 
+==3902438== 
+==3902438== HEAP SUMMARY:
+==3902438==     in use at exit: 0 bytes in 0 blocks
+==3902438==   total heap usage: 160 allocs, 160 frees, 1,067,060 bytes allocated
+==3902438== 
+==3902438== All heap blocks were freed -- no leaks are possible
+==3902438== 
+==3902438== For lists of detected and suppressed errors, rerun with: -s
+==3902438== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+Passed: Empty query
+Test: Query with invalid characters
+==3902440== Memcheck, a memory error detector
+==3902440== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==3902440== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==3902440== Command: ./querier ../crawler/pageDirectory ../indexer/testoutput
+==3902440== 
+Error: bad character '!' in query 
+==3902440== 
+==3902440== HEAP SUMMARY:
+==3902440==     in use at exit: 0 bytes in 0 blocks
+==3902440==   total heap usage: 160 allocs, 160 frees, 1,067,060 bytes allocated
+==3902440== 
+==3902440== All heap blocks were freed -- no leaks are possible
+==3902440== 
+==3902440== For lists of detected and suppressed errors, rerun with: -s
+==3902440== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+Expected: Error: bad character '!' in query.
+Test: Query starting with 'and'
+==3902453== Memcheck, a memory error detector
+==3902453== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==3902453== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==3902453== Command: ./querier ../crawler/pageDirectory ../indexer/testoutput
+==3902453== 
+Error: 'and' cannot be first 
+==3902453== 
+==3902453== HEAP SUMMARY:
+==3902453==     in use at exit: 0 bytes in 0 blocks
+==3902453==   total heap usage: 160 allocs, 160 frees, 1,067,060 bytes allocated
+==3902453== 
+==3902453== All heap blocks were freed -- no leaks are possible
+==3902453== 
+==3902453== For lists of detected and suppressed errors, rerun with: -s
+==3902453== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+Expected: Error: 'and' cannot be first
+Test: Query starting with 'or'
+==3902473== Memcheck, a memory error detector
+==3902473== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==3902473== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==3902473== Command: ./querier ../crawler/pageDirectory ../indexer/testoutput
+==3902473== 
+Error: 'or' cannot be first 
+==3902473== 
+==3902473== HEAP SUMMARY:
+==3902473==     in use at exit: 0 bytes in 0 blocks
+==3902473==   total heap usage: 160 allocs, 160 frees, 1,067,060 bytes allocated
+==3902473== 
+==3902473== All heap blocks were freed -- no leaks are possible
+==3902473== 
+==3902473== For lists of detected and suppressed errors, rerun with: -s
+==3902473== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+Expected: Error: 'or' cannot be first
+Test: Query ending with 'and'
+==3902484== Memcheck, a memory error detector
+==3902484== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==3902484== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==3902484== Command: ./querier ../crawler/pageDirectory ../indexer/testoutput
+==3902484== 
+Error: 'and' cannot be last 
+==3902484== 
+==3902484== HEAP SUMMARY:
+==3902484==     in use at exit: 0 bytes in 0 blocks
+==3902484==   total heap usage: 160 allocs, 160 frees, 1,067,060 bytes allocated
+==3902484== 
+==3902484== All heap blocks were freed -- no leaks are possible
+==3902484== 
+==3902484== For lists of detected and suppressed errors, rerun with: -s
+==3902484== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+Expected: Error: 'and' cannot be last
+Test: Query ending with 'or'
+==3902524== Memcheck, a memory error detector
+==3902524== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==3902524== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==3902524== Command: ./querier ../crawler/pageDirectory ../indexer/testoutput
+==3902524== 
+Error: 'or' cannot be last 
+==3902524== 
+==3902524== HEAP SUMMARY:
+==3902524==     in use at exit: 0 bytes in 0 blocks
+==3902524==   total heap usage: 160 allocs, 160 frees, 1,067,060 bytes allocated
+==3902524== 
+==3902524== All heap blocks were freed -- no leaks are possible
+==3902524== 
+==3902524== For lists of detected and suppressed errors, rerun with: -s
+==3902524== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+Expected: Error: 'or' cannot be last
+Test: Adjacent 'and' and 'or'
+==3902535== Memcheck, a memory error detector
+==3902535== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==3902535== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==3902535== Command: ./querier ../crawler/pageDirectory ../indexer/testoutput
+==3902535== 
+Error: 'and' and 'or' cannot be adjacent 
+==3902535== 
+==3902535== HEAP SUMMARY:
+==3902535==     in use at exit: 0 bytes in 0 blocks
+==3902535==   total heap usage: 160 allocs, 160 frees, 1,067,060 bytes allocated
+==3902535== 
+==3902535== All heap blocks were freed -- no leaks are possible
+==3902535== 
+==3902535== For lists of detected and suppressed errors, rerun with: -s
+==3902535== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+Expected: Error: 'and' and 'or' cannot be adjacent
+Test: Adjacent 'or' and 'and'
+==3902549== Memcheck, a memory error detector
+==3902549== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==3902549== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==3902549== Command: ./querier ../crawler/pageDirectory ../indexer/testoutput
+==3902549== 
+Error: 'or' and 'and' cannot be adjacent 
+==3902549== 
+==3902549== HEAP SUMMARY:
+==3902549==     in use at exit: 0 bytes in 0 blocks
+==3902549==   total heap usage: 160 allocs, 160 frees, 1,067,060 bytes allocated
+==3902549== 
+==3902549== All heap blocks were freed -- no leaks are possible
+==3902549== 
+==3902549== For lists of detected and suppressed errors, rerun with: -s
+==3902549== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+Expected: Error: 'or' and 'and' cannot be adjacent
+Test: Adjacent 'and' and 'and'
+==3902556== Memcheck, a memory error detector
+==3902556== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==3902556== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==3902556== Command: ./querier ../crawler/pageDirectory ../indexer/testoutput
+==3902556== 
+Error: 'and' and 'and' cannot be adjacent 
+==3902556== 
+==3902556== HEAP SUMMARY:
+==3902556==     in use at exit: 0 bytes in 0 blocks
+==3902556==   total heap usage: 160 allocs, 160 frees, 1,067,060 bytes allocated
+==3902556== 
+==3902556== All heap blocks were freed -- no leaks are possible
+==3902556== 
+==3902556== For lists of detected and suppressed errors, rerun with: -s
+==3902556== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+Expected: Error: 'and' and 'and' cannot be adjacent
+Test: Single word query
+==3902578== Memcheck, a memory error detector
+==3902578== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==3902578== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==3902578== Command: ./querier ../crawler/pageDirectory ../indexer/testoutput
+==3902578== 
+Query: home
+score 2 doc 1: http://cs50tse.cs.dartmouth.edu/tse/letters/index.html
+score 1 doc 9: http://cs50tse.cs.dartmouth.edu/tse/letters/C.html
+score 1 doc 8: http://cs50tse.cs.dartmouth.edu/tse/letters/D.html
+score 1 doc 7: http://cs50tse.cs.dartmouth.edu/tse/letters/F.html
+score 1 doc 6: http://cs50tse.cs.dartmouth.edu/tse/letters/H.html
+score 1 doc 5: http://cs50tse.cs.dartmouth.edu/tse/letters/G.html
+score 1 doc 4: http://cs50tse.cs.dartmouth.edu/tse/letters/E.html
+score 1 doc 3: http://cs50tse.cs.dartmouth.edu/tse/letters/B.html
+score 1 doc 2: http://cs50tse.cs.dartmouth.edu/tse/letters/A.html
+==3902578== 
+==3902578== HEAP SUMMARY:
+==3902578==     in use at exit: 0 bytes in 0 blocks
+==3902578==   total heap usage: 198 allocs, 198 frees, 1,154,109 bytes allocated
+==3902578== 
+==3902578== All heap blocks were freed -- no leaks are possible
+==3902578== 
+==3902578== For lists of detected and suppressed errors, rerun with: -s
+==3902578== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+Expected: Query: home
+Test: Spaces
+==3902616== Memcheck, a memory error detector
+==3902616== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==3902616== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==3902616== Command: ./querier ../crawler/pageDirectory ../indexer/testoutput
+==3902616== 
+Query: computational or world
+score 1 doc 9: http://cs50tse.cs.dartmouth.edu/tse/letters/C.html
+==3902616== 
+==3902616== HEAP SUMMARY:
+==3902616==     in use at exit: 0 bytes in 0 blocks
+==3902616==   total heap usage: 166 allocs, 166 frees, 1,084,021 bytes allocated
+==3902616== 
+==3902616== All heap blocks were freed -- no leaks are possible
+==3902616== 
+==3902616== For lists of detected and suppressed errors, rerun with: -s
+==3902616== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+Expected: hello world
+Test: Two word query with implicit 'and'
+==3902621== Memcheck, a memory error detector
+==3902621== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==3902621== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==3902621== Command: ./querier ../crawler/pageDirectory ../indexer/testoutput
+==3902621== 
+Query: home computational
+score 1 doc 9: http://cs50tse.cs.dartmouth.edu/tse/letters/C.html
+==3902621== 
+==3902621== HEAP SUMMARY:
+==3902621==     in use at exit: 0 bytes in 0 blocks
+==3902621==   total heap usage: 174 allocs, 174 frees, 1,084,149 bytes allocated
+==3902621== 
+==3902621== All heap blocks were freed -- no leaks are possible
+==3902621== 
+==3902621== For lists of detected and suppressed errors, rerun with: -s
+==3902621== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+Expected: Query: home computational
+Test: Two word query with explicit 'and'
+==3902632== Memcheck, a memory error detector
+==3902632== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==3902632== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==3902632== Command: ./querier ../crawler/pageDirectory ../indexer/testoutput
+==3902632== 
+Query: home and computational
+score 1 doc 9: http://cs50tse.cs.dartmouth.edu/tse/letters/C.html
+==3902632== 
+==3902632== HEAP SUMMARY:
+==3902632==     in use at exit: 0 bytes in 0 blocks
+==3902632==   total heap usage: 174 allocs, 174 frees, 1,084,149 bytes allocated
+==3902632== 
+==3902632== All heap blocks were freed -- no leaks are possible
+==3902632== 
+==3902632== For lists of detected and suppressed errors, rerun with: -s
+==3902632== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+Expected: Query: home and computational
+Test: Query with 'or'
+==3902635== Memcheck, a memory error detector
+==3902635== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==3902635== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==3902635== Command: ./querier ../crawler/pageDirectory ../indexer/testoutput
+==3902635== 
+Query: computational or home
+score 2 doc 1: http://cs50tse.cs.dartmouth.edu/tse/letters/index.html
+score 2 doc 9: http://cs50tse.cs.dartmouth.edu/tse/letters/C.html
+score 1 doc 8: http://cs50tse.cs.dartmouth.edu/tse/letters/D.html
+score 1 doc 7: http://cs50tse.cs.dartmouth.edu/tse/letters/F.html
+score 1 doc 6: http://cs50tse.cs.dartmouth.edu/tse/letters/H.html
+score 1 doc 5: http://cs50tse.cs.dartmouth.edu/tse/letters/G.html
+score 1 doc 4: http://cs50tse.cs.dartmouth.edu/tse/letters/E.html
+score 1 doc 3: http://cs50tse.cs.dartmouth.edu/tse/letters/B.html
+score 1 doc 2: http://cs50tse.cs.dartmouth.edu/tse/letters/A.html
+==3902635== 
+==3902635== HEAP SUMMARY:
+==3902635==     in use at exit: 0 bytes in 0 blocks
+==3902635==   total heap usage: 198 allocs, 198 frees, 1,154,109 bytes allocated
+==3902635== 
+==3902635== All heap blocks were freed -- no leaks are possible
+==3902635== 
+==3902635== For lists of detected and suppressed errors, rerun with: -s
+==3902635== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+Expected: Query: computational or home
+Test: Complex query with 'and' and 'or'
+==3902637== Memcheck, a memory error detector
+==3902637== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==3902637== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==3902637== Command: ./querier ../crawler/pageDirectory ../indexer/testoutput
+==3902637== 
+Query: home and computational or college and for
+score 1 doc 9: http://cs50tse.cs.dartmouth.edu/tse/letters/C.html
+==3902637== 
+==3902637== HEAP SUMMARY:
+==3902637==     in use at exit: 0 bytes in 0 blocks
+==3902637==   total heap usage: 174 allocs, 174 frees, 1,084,149 bytes allocated
+==3902637== 
+==3902637== All heap blocks were freed -- no leaks are possible
+==3902637== 
+==3902637== For lists of detected and suppressed errors, rerun with: -s
+==3902637== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+Expected: Query: home and computational or college and for
+All tests completed.
