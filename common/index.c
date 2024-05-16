@@ -74,28 +74,21 @@ int index_save(FILE* fp, index_t* index) {
 
 // Load the index from a file
 index_t* index_load(FILE* fp) {
-    // Count the number of lines in the file
-    int num_lines = file_numLines(fp);
-
-    // Create a new index with a size based on the number of lines in the file
-    index_t* index = index_new(num_lines); 
-
-    char* word;
+  int size = file_numLines(fp);
+  index_t* newIndex = index_new(size);
+  char* word;
+    // Extract data from index file into index struct
     while ((word = file_readWord(fp)) != NULL) {
+    counters_t* ctr = counters_new();
+    int docID, count;
 
-        counters_t* counters = counters_new();
-        if (counters == NULL) {
-            // Handle error: counters_new failed
-            free(word);  // Free word before returning
-            return NULL;
-        }
-        int docID, count;
-        while (fscanf(fp, "%d %d ", &docID, &count) == 2) {
-            counters_set(counters, docID, count);
-        }
-        hashtable_insert(index, word, counters);
-        free(word); 
+    //Extract (docID, count) pairs
+    while(fscanf(fp, "%d %d", &docID, &count) == 2) {
+        counters_set(ctr, docID, count);
     }
-    return index;
+    hashtable_insert(newIndex, word, ctr);
+    free(word);
+    }
+    return newIndex;
 }
 
